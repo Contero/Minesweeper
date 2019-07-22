@@ -23,6 +23,53 @@ namespace Minesweeper
             InitializeComponent();
         }
 
+        private void beginnerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rows = 9;
+            cols = 9;
+            bombs = 10;
+            setup();
+
+            intermediateToolStripMenuItem.Checked = false;
+            advancedToolStripMenuItem.Checked = false;
+            customToolStripMenuItem.Checked = false;
+        }
+
+        private void intermediateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rows = 16;
+            cols = 16;
+            bombs = 40;
+            setup();
+
+            beginnerToolStripMenuItem.Checked = false;
+            advancedToolStripMenuItem.Checked = false;
+            customToolStripMenuItem.Checked = false;
+
+
+        }
+
+        private void advancedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rows = 16;
+            cols = 30;
+            bombs = 99;
+            setup();
+
+            intermediateToolStripMenuItem.Checked = false;
+            beginnerToolStripMenuItem.Checked = false;
+            customToolStripMenuItem.Checked = false;
+
+
+        }
+
+        private void customToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            intermediateToolStripMenuItem.Checked = false;
+            beginnerToolStripMenuItem.Checked = false;
+            advancedToolStripMenuItem.Checked = false;
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
             //TODO: intialize form
@@ -30,6 +77,8 @@ namespace Minesweeper
             setup();
             //start game
         }
+
+
 
         /*
          * Sets up field
@@ -39,7 +88,12 @@ namespace Minesweeper
             //make minefield
             //field = new Cell[rows * cols];
 
-            //mineTable.Refresh();
+            this.SuspendLayout();
+
+            mineTable.Controls.Clear();
+            mineTable.RowStyles.Clear();
+            mineTable.RowCount = 1;
+            mineTable.ColumnCount = 1;
 
             for (int r = 0; r < rows; r++)
             {
@@ -63,7 +117,7 @@ namespace Minesweeper
                 }
             }
 
-          
+            this.ResumeLayout();
 
             //mineTable.Height = 25 * rows;
             //mineTable.Width = 25 * cols;

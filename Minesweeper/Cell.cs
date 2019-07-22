@@ -14,6 +14,8 @@ namespace Minesweeper
         private int TouchesCount { get; }
         private Content content;
         const int CELL_SIZE = 25;
+        State state = State.UP;
+
         public Cell()
         {
             this.Width = CELL_SIZE;
@@ -23,21 +25,29 @@ namespace Minesweeper
             this.FlatStyle = FlatStyle.Flat;
             this.FlatAppearance.BorderSize = 0;
             //this.FlatStyle
-            //this.FlatAppearance.BorderColor =  Color.Green;
+            this.FlatAppearance.MouseOverBackColor = Color.Transparent;
+            this.FlatAppearance.MouseDownBackColor = Color.Transparent;
             this.Paint += onPaint;
+            this.MouseDown += MouseDownHandler;
 
         }
 
         private void onPaint(Object sender, PaintEventArgs e)
         {
-            ControlPaint.DrawBorder(e.Graphics, this.ClientRectangle,
-            SystemColors.ControlLightLight, 5, ButtonBorderStyle.Outset,
-            SystemColors.ControlLightLight, 5, ButtonBorderStyle.Outset,
-            SystemColors.ControlLightLight, 5, ButtonBorderStyle.Outset,
-            SystemColors.ControlLightLight, 5, ButtonBorderStyle.Outset);
+            if (state == State.UP)
+            {
+                ControlPaint.DrawBorder(e.Graphics, this.ClientRectangle,
+                SystemColors.ControlLightLight, 5, ButtonBorderStyle.Outset,
+                SystemColors.ControlLightLight, 5, ButtonBorderStyle.Outset,
+                SystemColors.ControlLightLight, 5, ButtonBorderStyle.Outset,
+                SystemColors.ControlLightLight, 5, ButtonBorderStyle.Outset);
+            }
         }
-
-
+        private void MouseDownHandler(Object sender, EventArgs e)
+        {
+            state = State.DOWN;
+            //this.FlatAppearance.BorderSize = 0;    
+        }
     }
 
     enum Content
@@ -45,5 +55,11 @@ namespace Minesweeper
         BOMB,
         FLAG,
         NUMBER
+    }
+
+    enum State
+    {
+        UP,
+        DOWN
     }
 }
