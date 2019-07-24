@@ -76,7 +76,7 @@ namespace Minesweeper
         private void Form1_Load(object sender, EventArgs e)
         {
             //start first game in beginner mode
-            game = new Game(9, 9, 10, mineTable, NewGame);
+            game = new Game(9, 9, 10, this);
             game.NewGame();
         }
 

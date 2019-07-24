@@ -5,6 +5,21 @@ using System.Windows.Forms;
 
 namespace Minesweeper
 {
+    struct GameMode
+    {
+        readonly int rows,
+            cols,
+            mines,
+            toUncover;
+        public GameMode(int rows, int cols, int mines)
+        {
+            this.rows = rows;
+            this.cols = cols;
+            this.mines = mines;
+            toUncover = (rows * cols) - mines;
+        }
+    }
+
     class Game
     {
         public bool Newgame { get; set; }
@@ -14,19 +29,23 @@ namespace Minesweeper
         public int Mines { get; set; }
         public int ToUncover { get; set; }
         private readonly Button face;
-
-        private int uncovered = 0;
+        private int uncovered = 0,
+            flagged = 0;
         private TableLayoutPanel mineTable;
-
-        public Game(int rows, int cols, int mines, TableLayoutPanel mineTable, Button face)
+        private readonly GameMode EASY = new GameMode(9, 9, 10);
+        private readonly GameMode INTERMEDIATE = new GameMode(16, 16, 40);
+        private readonly GameMode ADVANCED = new GameMode(16, 30, 99);
+        Form1 form;
+        public Game(int rows, int cols, int mines, Form1 form)
         {
             Newgame = true;
             Rows = rows;
             Cols = cols;
             Mines = mines;
             ToUncover = (rows * cols - mines);
-            this.mineTable = mineTable;
-            this.face = face;
+            this.mineTable = form.mineTable;
+            this.face = form.NewGame;
+            this.form = form;
         }
 
         /*
@@ -75,48 +94,46 @@ namespace Minesweeper
         /*
          * Resets for a new game
          */
-         public void NewGame()
+        public void NewGame()
         {
             uncovered = 0;
             Newgame = true;
             GameOver = false;
-         /*
-         * Sets up minefield
-         */
-            
-                //TODO: Suspend layout is still slow, find a better way
-                //this.SuspendLayout();
+            flagged = 0;
 
-                mineTable.Controls.Clear();
-                mineTable.RowStyles.Clear();
-                mineTable.RowCount = 1;
-                mineTable.ColumnCount = 1;
+            // set up minefield
 
-                for (int r = 0; r < Rows; r++)
+            //TODO: Suspend layout is still slow, find a better way
+            form.SuspendLayout();
+
+            mineTable.Controls.Clear();
+            mineTable.RowStyles.Clear();
+            mineTable.RowCount = 1;
+            mineTable.ColumnCount = 1;
+
+            for (int r = 0; r < Rows; r++)
+            {
+                if (mineTable.RowCount < (r + 1))
                 {
-                    if (mineTable.RowCount < (r + 1))
-                    {
-                        mineTable.RowCount = r + 1;
-                        mineTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-                    }
-
-                    for (int c = 0; c < Cols; c++)
-                    {
-                        if (mineTable.ColumnCount < (c + 1))
-                        {
-                            mineTable.ColumnCount = c + 1;
-                            mineTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-                        }
-
-                        mineTable.Controls.Add(new Cell(c, r, this), c, r);
-                    }
+                    mineTable.RowCount = r + 1;
+                    mineTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
                 }
 
-                //this.ResumeLayout();
+                for (int c = 0; c < Cols; c++)
+                {
+                    if (mineTable.ColumnCount < (c + 1))
+                    {
+                        mineTable.ColumnCount = c + 1;
+                        mineTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+                    }
 
+                    mineTable.Controls.Add(new Cell(c, r, this), c, r);
+                }
             }
+            face.Text = ":)";
+            form.ResumeLayout();
 
-        
+        }
 
         /*
          * Left Click - uncovers a cell, lays new minefield if it's the first cell uncovered
@@ -142,9 +159,10 @@ namespace Minesweeper
                     C.BackColor = Color.Red;
                     C.FlatAppearance.MouseOverBackColor = Color.Red;
                     C.Text = "*";
+                    face.Text = "X(";
 
                     //show all unflagged mines
-                    foreach(Cell cell in mineTable.Controls)
+                    foreach (Cell cell in mineTable.Controls)
                     {
                         if (cell.HasBomb && !cell.Flagged && !cell.Equals(C))
                         {
@@ -153,7 +171,7 @@ namespace Minesweeper
                     }
 
                     GameOver = true;
-                    
+
                 }
                 else
                 {
@@ -170,7 +188,15 @@ namespace Minesweeper
                         }
                     }
 
+                    uncovered++;
                     
+                    //check for winner
+                    if (uncovered == ToUncover)
+                    {
+                        GameOver = true;
+                        face.Text = "8)";
+                    }
+
                 }
                 C.Refresh();
             }
@@ -184,6 +210,15 @@ namespace Minesweeper
             if (C.CellState == State.UP)
             {
                 C.Flagged = !C.Flagged;
+
+                if (C.Flagged)
+                {
+                    flagged++;
+                }
+                else
+                {
+                    flagged--;
+                }
 
                 C.Text = (C.Flagged) ? "F" : "";
 
