@@ -8,38 +8,50 @@ namespace Minesweeper
     class Game
     {
         public bool Newgame { get; set; }
+        public bool GameOver { get; set; }
         public int Rows { get; set; }
         public int Cols { get; set; }
         public int Mines { get; set; }
+        public int ToUncover { get; set; }
+        private readonly Button face;
 
+        private int uncovered = 0;
         private TableLayoutPanel mineTable;
 
-        public Game(int rows, int cols, int mines, TableLayoutPanel mineTable)
+        public Game(int rows, int cols, int mines, TableLayoutPanel mineTable, Button face)
         {
             Newgame = true;
             Rows = rows;
             Cols = cols;
             Mines = mines;
+            ToUncover = (rows * cols - mines);
             this.mineTable = mineTable;
+            this.face = face;
         }
 
         /*
          * Handles Mouse down, records if it is right or left to detect both
+         * ignore if game over
          */
         public void MouseDownHandle(Cell sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            if (!GameOver)
             {
-                sender.LeftButton = true;
-            }
-            else if (e.Button == MouseButtons.Right)
-            {
-                sender.RightButton = true;
+                if (e.Button == MouseButtons.Left)
+                {
+                    sender.LeftButton = true;
+                }
+                else if (e.Button == MouseButtons.Right)
+                {
+                    sender.RightButton = true;
+                }
             }
         }
 
         /*
          * Handles MouseUp, fires different methods for left, right, and both
+         * If in game over state, sender won't have button toggles set so
+         * nothing will fire
          */
         public void MouseUpHandle(Cell sender, MouseEventArgs e)
         {
@@ -59,6 +71,52 @@ namespace Minesweeper
                 sender.RightButton = false;
             }
         }
+
+        /*
+         * Resets for a new game
+         */
+         public void NewGame()
+        {
+            uncovered = 0;
+            Newgame = true;
+            GameOver = false;
+         /*
+         * Sets up minefield
+         */
+            
+                //TODO: Suspend layout is still slow, find a better way
+                //this.SuspendLayout();
+
+                mineTable.Controls.Clear();
+                mineTable.RowStyles.Clear();
+                mineTable.RowCount = 1;
+                mineTable.ColumnCount = 1;
+
+                for (int r = 0; r < Rows; r++)
+                {
+                    if (mineTable.RowCount < (r + 1))
+                    {
+                        mineTable.RowCount = r + 1;
+                        mineTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+                    }
+
+                    for (int c = 0; c < Cols; c++)
+                    {
+                        if (mineTable.ColumnCount < (c + 1))
+                        {
+                            mineTable.ColumnCount = c + 1;
+                            mineTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+                        }
+
+                        mineTable.Controls.Add(new Cell(c, r, this), c, r);
+                    }
+                }
+
+                //this.ResumeLayout();
+
+            }
+
+        
 
         /*
          * Left Click - uncovers a cell, lays new minefield if it's the first cell uncovered
@@ -81,7 +139,21 @@ namespace Minesweeper
                 if (C.HasBomb)
                 {
                     //todo: game over
-                    C.ForeColor = Color.Red;
+                    C.BackColor = Color.Red;
+                    C.FlatAppearance.MouseOverBackColor = Color.Red;
+                    C.Text = "*";
+
+                    //show all unflagged mines
+                    foreach(Cell cell in mineTable.Controls)
+                    {
+                        if (cell.HasBomb && !cell.Flagged && !cell.Equals(C))
+                        {
+                            cell.Text = "*";
+                        }
+                    }
+
+                    GameOver = true;
+                    
                 }
                 else
                 {
@@ -141,13 +213,13 @@ namespace Minesweeper
 
                     coord = new Tuple<int, int>(x, y);
 
-                } while (x == C.X && y == C.Y
-                    && !laidMines.Contains(coord));
+                } while ((x == C.X && y == C.Y)
+                    || laidMines.Contains(coord));
 
                 laidMines.Add(coord);
 
                 ((Cell)mineTable.GetControlFromPosition(x, y)).HasBomb = true;
-                (mineTable.GetControlFromPosition(x, y)).Text = "*";
+                //(mineTable.GetControlFromPosition(x, y)).Text = "*";
 
             }
 

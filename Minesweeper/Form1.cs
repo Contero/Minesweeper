@@ -25,8 +25,9 @@ namespace Minesweeper
             game.Rows = 9;
             game.Cols = 9;
             game.Mines = 10;
-            game.Newgame = true;
-            setup();
+            game.ToUncover = 71;
+
+            game.NewGame(); 
 
             intermediateToolStripMenuItem.Checked = false;
             advancedToolStripMenuItem.Checked = false;
@@ -38,8 +39,9 @@ namespace Minesweeper
             game.Rows = 16;
             game.Cols = 16;
             game.Mines = 40;
-            game.Newgame = true;
-            setup();
+            game.ToUncover = 216;
+
+            game.NewGame();
 
             beginnerToolStripMenuItem.Checked = false;
             advancedToolStripMenuItem.Checked = false;
@@ -51,8 +53,9 @@ namespace Minesweeper
             game.Rows = 16;
             game.Cols = 30;
             game.Mines = 99;
-            game.Newgame = true;
-            setup();
+            game.ToUncover = 381;
+            
+            game.NewGame();
 
             intermediateToolStripMenuItem.Checked = false;
             beginnerToolStripMenuItem.Checked = false;
@@ -67,51 +70,19 @@ namespace Minesweeper
             beginnerToolStripMenuItem.Checked = false;
             advancedToolStripMenuItem.Checked = false;
 
-            game.Newgame = true;
+            game.NewGame();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             //start first game in beginner mode
-            game = new Game(9, 9, 10, mineTable);
-            setup();
+            game = new Game(9, 9, 10, mineTable, NewGame);
+            game.NewGame();
         }
 
-        /*
-         * Sets up minefield
-         */
-        private void setup()
+        private void NewGame_Click(object sender, EventArgs e)
         {
-            //TODO: Suspend layout is still slow, find a better way
-            this.SuspendLayout();
-
-            mineTable.Controls.Clear();
-            mineTable.RowStyles.Clear();
-            mineTable.RowCount = 1;
-            mineTable.ColumnCount = 1;
-
-            for (int r = 0; r < game.Rows; r++)
-            {
-                if (mineTable.RowCount < (r+1))
-                {
-                    mineTable.RowCount = r+1;
-                    mineTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));          
-                }
-
-                for (int c = 0; c< game.Cols; c++)
-                {
-                    if (mineTable.ColumnCount < (c + 1))
-                    {
-                        mineTable.ColumnCount = c + 1;
-                        mineTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-                    }
-
-                    mineTable.Controls.Add(new Cell(c, r, game),c,r);
-                }
-            }
-
-            this.ResumeLayout();
-           
+            game.NewGame();
         }
     }
 }
