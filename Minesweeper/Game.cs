@@ -7,7 +7,7 @@ namespace Minesweeper
 {
     struct GameMode
     {
-        readonly int rows,
+        readonly public int rows,
             cols,
             mines,
             toUncover;
@@ -18,6 +18,13 @@ namespace Minesweeper
             this.mines = mines;
             toUncover = (rows * cols) - mines;
         }
+    }
+
+    enum GameModes
+    {
+        EASY,
+        INTERMEDIATE,
+        ADVANCED
     }
 
     class Game
@@ -49,6 +56,35 @@ namespace Minesweeper
         }
 
         /*
+         * Accepts a standard game mode
+         * changes the game parameters to that mode
+         */
+         public void SetGameMode(GameModes gameMode)
+        {
+            switch (gameMode)
+            {
+                case GameModes.EASY:
+                    Rows = EASY.rows;
+                    Cols = EASY.cols;
+                    Mines = EASY.mines;
+                    ToUncover = EASY.toUncover;
+                    break;
+                case GameModes.INTERMEDIATE:
+                    Rows = INTERMEDIATE.rows;
+                    Cols = INTERMEDIATE.cols;
+                    Mines = INTERMEDIATE.mines;
+                    ToUncover = INTERMEDIATE.toUncover;
+                    break;
+                case GameModes.ADVANCED:
+                    Rows = ADVANCED.rows;
+                    Cols = ADVANCED.cols;
+                    Mines = ADVANCED.mines;
+                    ToUncover = ADVANCED.toUncover;
+                    break;
+            }
+        }
+
+        /*
          * Handles Mouse down, records if it is right or left to detect both
          * ignore if game over
          */
@@ -76,8 +112,9 @@ namespace Minesweeper
         {
             if (sender.LeftButton && sender.RightButton)
             {
-                Flag(sender);
+                ChordClick(sender);
                 sender.LeftButton = false;
+                sender.RightButton = false;
             }
             else if (sender.LeftButton)
             {
@@ -132,7 +169,6 @@ namespace Minesweeper
             }
             face.Text = ":)";
             form.ResumeLayout();
-
         }
 
         /*
@@ -222,6 +258,39 @@ namespace Minesweeper
 
                 C.Text = (C.Flagged) ? "F" : "";
 
+            }
+        }
+
+        /*
+         * Chord Click
+         * If chords on a number that is equal to the number of mines touching
+         * uncovers all other touching cells in up state
+         */
+         public void ChordClick(Cell cell)
+        {
+            List<Cell> surrounding;
+            int flaggedNear = 0;
+
+            if (cell.CellState == State.DOWN
+                && cell.TouchesCount > 0)
+            {
+                surrounding = GetSurrounding(cell);
+
+                foreach (Cell c in surrounding)
+                {
+                    if (c.Flagged)
+                    {
+                        flaggedNear++;
+                    }
+                }
+
+                if (flaggedNear == cell.TouchesCount)
+                {
+                    foreach (Cell c in surrounding)
+                    {
+                        Uncover(c);
+                    }
+                }
             }
         }
 

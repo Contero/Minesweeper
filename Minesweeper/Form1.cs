@@ -21,12 +21,7 @@ namespace Minesweeper
 
         private void beginnerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
-            game.Rows = 9;
-            game.Cols = 9;
-            game.Mines = 10;
-            game.ToUncover = 71;
-
+            game.SetGameMode(GameModes.EASY);
             game.NewGame(); 
 
             intermediateToolStripMenuItem.Checked = false;
@@ -36,11 +31,7 @@ namespace Minesweeper
 
         private void intermediateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            game.Rows = 16;
-            game.Cols = 16;
-            game.Mines = 40;
-            game.ToUncover = 216;
-
+            game.SetGameMode(GameModes.INTERMEDIATE);
             game.NewGame();
 
             beginnerToolStripMenuItem.Checked = false;
@@ -50,18 +41,12 @@ namespace Minesweeper
 
         private void advancedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            game.Rows = 16;
-            game.Cols = 30;
-            game.Mines = 99;
-            game.ToUncover = 381;
-            
+            game.SetGameMode(GameModes.ADVANCED);
             game.NewGame();
 
             intermediateToolStripMenuItem.Checked = false;
             beginnerToolStripMenuItem.Checked = false;
             customToolStripMenuItem.Checked = false;
-
-
         }
 
         private void customToolStripMenuItem_Click(object sender, EventArgs e)
