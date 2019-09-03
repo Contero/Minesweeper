@@ -43,6 +43,9 @@ namespace Minesweeper
         private readonly GameMode INTERMEDIATE = new GameMode(16, 16, 40);
         private readonly GameMode ADVANCED = new GameMode(16, 30, 99);
         Form1 form;
+        public bool LeftButton { get; set; } = false;
+        public bool RightButton { get; set; } = false;
+
         public Game(int rows, int cols, int mines, Form1 form)
         {
             Newgame = true;
@@ -85,6 +88,14 @@ namespace Minesweeper
         }
 
         /*
+         * Handles Mouse in, if in a chord click push surrounding cells down 
+         */ 
+         public void MouseInHandle(Cell sender, MouseEventArgs e)
+        {
+
+        }
+
+        /*
          * Handles Mouse down, records if it is right or left to detect both
          * ignore if game over
          */
@@ -94,12 +105,30 @@ namespace Minesweeper
             {
                 if (e.Button == MouseButtons.Left)
                 {
-                    sender.LeftButton = true;
+                    LeftButton = true;
                 }
                 else if (e.Button == MouseButtons.Right)
                 {
-                    sender.RightButton = true;
+                    RightButton = true;
                 }
+
+                //if chord show surrounding as down
+                if (LeftButton && RightButton)
+                {
+                    List<Cell> Surrounding = GetSurrounding(sender);
+                    foreach (Cell cell in Surrounding)
+                    {
+                        if (cell.CellState == State.UP
+                            && !cell.Flagged)
+                        {
+                            cell.TempDown = true;
+                            cell.CellState = State.DOWN;
+                        }
+                    }
+
+                    form.Refresh();
+                }
+
             }
         }
 
@@ -110,21 +139,21 @@ namespace Minesweeper
          */
         public void MouseUpHandle(Cell sender, MouseEventArgs e)
         {
-            if (sender.LeftButton && sender.RightButton)
+            if (LeftButton && RightButton)
             {
                 ChordClick(sender);
-                sender.LeftButton = false;
-                sender.RightButton = false;
+                LeftButton = false;
+                RightButton = false;
             }
-            else if (sender.LeftButton)
+            else if (LeftButton)
             {
                 Uncover(sender);
-                sender.LeftButton = false;
+                LeftButton = false;
             }
-            else if (sender.RightButton)
+            else if (RightButton)
             {
                 Flag(sender);
-                sender.RightButton = false;
+                RightButton = false;
             }
         }
 
@@ -168,6 +197,7 @@ namespace Minesweeper
                 }
             }
             face.Text = ":)";
+            form.mineCounter.Text = Mines.ToString();
             form.ResumeLayout();
         }
 
@@ -239,7 +269,7 @@ namespace Minesweeper
         }
 
         /*
-         * right click - adds or removes a cell
+         * right click - adds or removes a flag
          */
         public void Flag(Cell C)
         {
@@ -250,10 +280,12 @@ namespace Minesweeper
                 if (C.Flagged)
                 {
                     flagged++;
+                    form.mineCounter.Text = (int.Parse(form.mineCounter.Text) - 1).ToString();
                 }
                 else
                 {
                     flagged--;
+                    form.mineCounter.Text = (int.Parse(form.mineCounter.Text) + 1).ToString();
                 }
 
                 C.Text = (C.Flagged) ? "F" : "";
@@ -281,16 +313,22 @@ namespace Minesweeper
                     if (c.Flagged)
                     {
                         flaggedNear++;
-                    }
+                    }   
                 }
-
-                if (flaggedNear == cell.TouchesCount)
+                foreach (Cell c in surrounding)
                 {
-                    foreach (Cell c in surrounding)
+                    if (c.TempDown)
+                    {
+                        c.TempDown = false;
+                        c.CellState = State.UP;  
+                    }
+                    if (flaggedNear == cell.TouchesCount)
                     {
                         Uncover(c);
                     }
                 }
+                 
+                form.Refresh();
             }
         }
 
@@ -323,8 +361,6 @@ namespace Minesweeper
                 laidMines.Add(coord);
 
                 ((Cell)mineTable.GetControlFromPosition(x, y)).HasBomb = true;
-                //(mineTable.GetControlFromPosition(x, y)).Text = "*";
-
             }
 
             //figure out the number of mines each cell touches
@@ -343,7 +379,37 @@ namespace Minesweeper
                         }
                     }
                     cell.TouchesCount = minecount;
+                
+                    switch (minecount)
+                    {
+                        case 1:
+                            cell.ForeColor = Color.Blue;
+                            break;
+                        case 2:
+                            cell.ForeColor = Color.Green;
+                            break;
+                        case 3:
+                            cell.ForeColor = Color.Red;
+                            break;
+                        case 4:
+                            cell.ForeColor = Color.Purple;
+                            break;
+                        case 5:
+                            cell.ForeColor = Color.Maroon;
+                            break;
+                        case 6:
+                            cell.ForeColor = Color.Turquoise;
+                            break;
+                        case 7:
+                            cell.ForeColor = Color.Black;
+                            break;
+                        case 8:
+                            cell.ForeColor = Color.Gray;
+                            break;
+                    }
 
+                    cell.Font = new Font(cell.Font, FontStyle.Bold);
+                   
                 }
             }
         }

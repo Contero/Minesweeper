@@ -16,10 +16,11 @@ namespace Minesweeper
         const int CELL_SIZE = 25;
         public State CellState { get; set; } = State.UP;
 
-        public bool LeftButton { get; set; } = false;
-        public bool RightButton { get; set; } = false;
+ //       public bool LeftButton { get; set; } = false;
+ //       public bool RightButton { get; set; } = false;
         public bool Flagged { get; set; } = false;
         public bool HasBomb { get; set; } = false;
+        public bool TempDown { get; set; } = false;
 
         public int X { get; }
         public int Y { get; }
