@@ -103,6 +103,7 @@ namespace Minesweeper
         {
             if (!GameOver)
             {
+
                 if (e.Button == MouseButtons.Left)
                 {
                     LeftButton = true;
@@ -112,8 +113,21 @@ namespace Minesweeper
                     RightButton = true;
                 }
 
+                //show worried face
+                if ((sender.CellState == State.DOWN && RightButton && LeftButton)
+                    || (sender.CellState ==State.UP && LeftButton))
+                {
+                    this.face.Text = ":o";
+                }
+
+                //go back to smiley if chorded on up cell
+                if (sender.CellState == State.UP && RightButton && LeftButton)
+                {
+                    this.face.Text = ":)";
+                }
+
                 //if chord show surrounding as down
-                if (LeftButton && RightButton)
+                if (LeftButton && RightButton && sender.CellState == State.DOWN)
                 {
                     List<Cell> Surrounding = GetSurrounding(sender);
                     foreach (Cell cell in Surrounding)
@@ -128,7 +142,6 @@ namespace Minesweeper
 
                     form.Refresh();
                 }
-
             }
         }
 
@@ -155,6 +168,12 @@ namespace Minesweeper
                 Flag(sender);
                 RightButton = false;
             }
+
+            if (!GameOver)
+            {
+                this.face.Text = ":)";
+            }
+            
         }
 
         /*
