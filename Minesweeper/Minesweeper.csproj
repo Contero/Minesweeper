@@ -83,5 +83,15 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="faceSmiley2png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="faceWorried2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="faceDead.png" />
+    <EmbeddedResource Include="faceWon.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

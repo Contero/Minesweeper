@@ -24,7 +24,8 @@ namespace Minesweeper
     {
         EASY,
         INTERMEDIATE,
-        ADVANCED
+        ADVANCED,
+        CUSTOM
     }
 
     class Game
@@ -42,9 +43,15 @@ namespace Minesweeper
         private readonly GameMode EASY = new GameMode(9, 9, 10);
         private readonly GameMode INTERMEDIATE = new GameMode(16, 16, 40);
         private readonly GameMode ADVANCED = new GameMode(16, 30, 99);
+        private GameMode CUSTOM = new GameMode(0, 0, 0);
         Form1 form;
         public bool LeftButton { get; set; } = false;
         public bool RightButton { get; set; } = false;
+
+        Bitmap faceSmile = new Bitmap(typeof(Game), "faceSmiley2png.png");
+        Bitmap faceWorried = new Bitmap(typeof(Game), "faceWorried2.png");
+        Bitmap faceDead = new Bitmap(typeof(Game), "faceDead.png");
+        Bitmap faceWon = new Bitmap(typeof(Game), "faceWon.png");
 
         public Game(int rows, int cols, int mines, Form1 form)
         {
@@ -84,6 +91,12 @@ namespace Minesweeper
                     Mines = ADVANCED.mines;
                     ToUncover = ADVANCED.toUncover;
                     break;
+                case GameModes.CUSTOM:
+                    Rows = CUSTOM.rows;
+                    Cols = CUSTOM.cols;
+                    Mines = CUSTOM.mines;
+                    ToUncover = CUSTOM.toUncover;
+                    break;
             }
         }
 
@@ -117,7 +130,7 @@ namespace Minesweeper
                 if ((sender.CellState == State.DOWN && RightButton && LeftButton)
                     || (sender.CellState ==State.UP && LeftButton))
                 {
-                    this.face.Text = ":o";
+                    this.face.Image = faceWorried;
                 }
 
                 //go back to smiley if chorded on up cell
@@ -171,7 +184,7 @@ namespace Minesweeper
 
             if (!GameOver)
             {
-                this.face.Text = ":)";
+                this.face.Image = faceSmile;
             }
             
         }
@@ -215,7 +228,7 @@ namespace Minesweeper
                     mineTable.Controls.Add(new Cell(c, r, this), c, r);
                 }
             }
-            face.Text = ":)";
+            face.Image = faceSmile;
             form.mineCounter.Text = Mines.ToString();
             form.ResumeLayout();
         }
@@ -244,7 +257,7 @@ namespace Minesweeper
                     C.BackColor = Color.Red;
                     C.FlatAppearance.MouseOverBackColor = Color.Red;
                     C.Text = "*";
-                    face.Text = "X(";
+                    face.Image = faceDead;
 
                     //show all unflagged mines
                     foreach (Cell cell in mineTable.Controls)
@@ -279,7 +292,7 @@ namespace Minesweeper
                     if (uncovered == ToUncover)
                     {
                         GameOver = true;
-                        face.Text = "8)";
+                        face.Image=faceWon;
                     }
 
                 }

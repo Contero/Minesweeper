@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.gameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -38,18 +39,18 @@
             this.customToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.mineTable = new System.Windows.Forms.TableLayoutPanel();
-            this.minefieldpanel = new System.Windows.Forms.Panel();
-            this.headerTable = new System.Windows.Forms.TableLayoutPanel();
-            this.NewGame = new System.Windows.Forms.Button();
-            this.TimerLabel = new System.Windows.Forms.Label();
-            this.mineCounter = new System.Windows.Forms.Label();
             this.headerPanel = new System.Windows.Forms.Panel();
+            this.headerTable = new System.Windows.Forms.TableLayoutPanel();
+            this.mineCounter = new System.Windows.Forms.Label();
+            this.TimerLabel = new System.Windows.Forms.Label();
+            this.NewGame = new System.Windows.Forms.Button();
+            this.minefieldpanel = new System.Windows.Forms.Panel();
+            this.mineTable = new System.Windows.Forms.TableLayoutPanel();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
-            this.minefieldpanel.SuspendLayout();
-            this.headerTable.SuspendLayout();
             this.headerPanel.SuspendLayout();
+            this.headerTable.SuspendLayout();
+            this.minefieldpanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -152,6 +153,95 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(395, 303);
             this.tableLayoutPanel1.TabIndex = 3;
             // 
+            // headerPanel
+            // 
+            this.headerPanel.AutoSize = true;
+            this.headerPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.headerPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.headerPanel.Controls.Add(this.headerTable);
+            this.headerPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.headerPanel.Location = new System.Drawing.Point(10, 10);
+            this.headerPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.headerPanel.Name = "headerPanel";
+            this.headerPanel.Size = new System.Drawing.Size(375, 60);
+            this.headerPanel.TabIndex = 6;
+            // 
+            // headerTable
+            // 
+            this.headerTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.headerTable.ColumnCount = 5;
+            this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 61F));
+            this.headerTable.Controls.Add(this.mineCounter, 0, 0);
+            this.headerTable.Controls.Add(this.TimerLabel, 4, 0);
+            this.headerTable.Controls.Add(this.NewGame, 2, 0);
+            this.headerTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.headerTable.Location = new System.Drawing.Point(0, 0);
+            this.headerTable.Margin = new System.Windows.Forms.Padding(0);
+            this.headerTable.Name = "headerTable";
+            this.headerTable.RowCount = 1;
+            this.headerTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.headerTable.Size = new System.Drawing.Size(371, 56);
+            this.headerTable.TabIndex = 0;
+            // 
+            // mineCounter
+            // 
+            this.mineCounter.AutoSize = true;
+            this.mineCounter.BackColor = System.Drawing.Color.Black;
+            this.mineCounter.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.mineCounter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mineCounter.ForeColor = System.Drawing.Color.Red;
+            this.mineCounter.Location = new System.Drawing.Point(3, 0);
+            this.mineCounter.Name = "mineCounter";
+            this.mineCounter.Size = new System.Drawing.Size(54, 56);
+            this.mineCounter.TabIndex = 6;
+            this.mineCounter.Text = "000";
+            this.mineCounter.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // TimerLabel
+            // 
+            this.TimerLabel.AutoSize = true;
+            this.TimerLabel.BackColor = System.Drawing.Color.Black;
+            this.TimerLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.TimerLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TimerLabel.ForeColor = System.Drawing.Color.Red;
+            this.TimerLabel.Location = new System.Drawing.Point(313, 0);
+            this.TimerLabel.Name = "TimerLabel";
+            this.TimerLabel.Size = new System.Drawing.Size(55, 56);
+            this.TimerLabel.TabIndex = 5;
+            this.TimerLabel.Text = "000";
+            this.TimerLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // NewGame
+            // 
+            this.NewGame.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.NewGame.FlatAppearance.BorderColor = System.Drawing.Color.Red;
+            this.NewGame.FlatAppearance.BorderSize = 5;
+            this.NewGame.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.NewGame.Image = ((System.Drawing.Image)(resources.GetObject("NewGame.Image")));
+            this.NewGame.Location = new System.Drawing.Point(158, 3);
+            this.NewGame.Name = "NewGame";
+            this.NewGame.Size = new System.Drawing.Size(54, 50);
+            this.NewGame.TabIndex = 3;
+            this.NewGame.UseVisualStyleBackColor = true;
+            this.NewGame.Click += new System.EventHandler(this.NewGame_Click);
+            // 
+            // minefieldpanel
+            // 
+            this.minefieldpanel.AutoSize = true;
+            this.minefieldpanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.minefieldpanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.minefieldpanel.Controls.Add(this.mineTable);
+            this.minefieldpanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.minefieldpanel.Location = new System.Drawing.Point(10, 80);
+            this.minefieldpanel.Margin = new System.Windows.Forms.Padding(0);
+            this.minefieldpanel.Name = "minefieldpanel";
+            this.minefieldpanel.Size = new System.Drawing.Size(375, 213);
+            this.minefieldpanel.TabIndex = 5;
+            // 
             // mineTable
             // 
             this.mineTable.AutoSize = true;
@@ -169,94 +259,6 @@
             this.mineTable.Size = new System.Drawing.Size(371, 209);
             this.mineTable.TabIndex = 1;
             // 
-            // minefieldpanel
-            // 
-            this.minefieldpanel.AutoSize = true;
-            this.minefieldpanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.minefieldpanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.minefieldpanel.Controls.Add(this.mineTable);
-            this.minefieldpanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.minefieldpanel.Location = new System.Drawing.Point(10, 80);
-            this.minefieldpanel.Margin = new System.Windows.Forms.Padding(0);
-            this.minefieldpanel.Name = "minefieldpanel";
-            this.minefieldpanel.Size = new System.Drawing.Size(375, 213);
-            this.minefieldpanel.TabIndex = 5;
-            // 
-            // headerTable
-            // 
-            this.headerTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.headerTable.ColumnCount = 5;
-            this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
-            this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
-            this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
-            this.headerTable.Controls.Add(this.mineCounter, 0, 0);
-            this.headerTable.Controls.Add(this.TimerLabel, 4, 0);
-            this.headerTable.Controls.Add(this.NewGame, 2, 0);
-            this.headerTable.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.headerTable.Location = new System.Drawing.Point(0, 0);
-            this.headerTable.Margin = new System.Windows.Forms.Padding(0);
-            this.headerTable.Name = "headerTable";
-            this.headerTable.RowCount = 1;
-            this.headerTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.headerTable.Size = new System.Drawing.Size(371, 56);
-            this.headerTable.TabIndex = 0;
-            // 
-            // NewGame
-            // 
-            this.NewGame.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.NewGame.FlatAppearance.BorderColor = System.Drawing.Color.Red;
-            this.NewGame.FlatAppearance.BorderSize = 5;
-            this.NewGame.Location = new System.Drawing.Point(158, 3);
-            this.NewGame.Name = "NewGame";
-            this.NewGame.Size = new System.Drawing.Size(54, 50);
-            this.NewGame.TabIndex = 3;
-            this.NewGame.Text = ":)";
-            this.NewGame.UseVisualStyleBackColor = true;
-            this.NewGame.Click += new System.EventHandler(this.NewGame_Click);
-            // 
-            // TimerLabel
-            // 
-            this.TimerLabel.AutoSize = true;
-            this.TimerLabel.BackColor = System.Drawing.Color.Black;
-            this.TimerLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.TimerLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TimerLabel.ForeColor = System.Drawing.Color.Red;
-            this.TimerLabel.Location = new System.Drawing.Point(313, 0);
-            this.TimerLabel.Name = "TimerLabel";
-            this.TimerLabel.Size = new System.Drawing.Size(55, 56);
-            this.TimerLabel.TabIndex = 5;
-            this.TimerLabel.Text = "000";
-            this.TimerLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // mineCounter
-            // 
-            this.mineCounter.AutoSize = true;
-            this.mineCounter.BackColor = System.Drawing.Color.Black;
-            this.mineCounter.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.mineCounter.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mineCounter.ForeColor = System.Drawing.Color.Red;
-            this.mineCounter.Location = new System.Drawing.Point(3, 0);
-            this.mineCounter.Name = "mineCounter";
-            this.mineCounter.Size = new System.Drawing.Size(54, 56);
-            this.mineCounter.TabIndex = 6;
-            this.mineCounter.Text = "000";
-            this.mineCounter.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // headerPanel
-            // 
-            this.headerPanel.AutoSize = true;
-            this.headerPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.headerPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.headerPanel.Controls.Add(this.headerTable);
-            this.headerPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.headerPanel.Location = new System.Drawing.Point(10, 10);
-            this.headerPanel.Margin = new System.Windows.Forms.Padding(0);
-            this.headerPanel.Name = "headerPanel";
-            this.headerPanel.Size = new System.Drawing.Size(375, 60);
-            this.headerPanel.TabIndex = 6;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -268,17 +270,17 @@
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Minesweeper";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
-            this.minefieldpanel.ResumeLayout(false);
-            this.minefieldpanel.PerformLayout();
+            this.headerPanel.ResumeLayout(false);
             this.headerTable.ResumeLayout(false);
             this.headerTable.PerformLayout();
-            this.headerPanel.ResumeLayout(false);
+            this.minefieldpanel.ResumeLayout(false);
+            this.minefieldpanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
