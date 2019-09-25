@@ -10,14 +10,11 @@ namespace Minesweeper
 {
     class Cell : Button
     {
-        private List<Cell> touches;
         public int TouchesCount { get; set; }
         public Content CellContent { get; set; }
         const int CELL_SIZE = 25;
         public State CellState { get; set; } = State.UP;
 
- //       public bool LeftButton { get; set; } = false;
- //       public bool RightButton { get; set; } = false;
         public bool Flagged { get; set; } = false;
         public bool HasBomb { get; set; } = false;
         public bool TempDown { get; set; } = false;

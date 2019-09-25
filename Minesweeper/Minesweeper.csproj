@@ -93,5 +93,14 @@
     <EmbeddedResource Include="faceDead.png" />
     <EmbeddedResource Include="faceWon.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="mine.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="flag.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="wrongFlag.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

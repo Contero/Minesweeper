@@ -52,6 +52,9 @@ namespace Minesweeper
         Bitmap faceWorried = new Bitmap(typeof(Game), "faceWorried2.png");
         Bitmap faceDead = new Bitmap(typeof(Game), "faceDead.png");
         Bitmap faceWon = new Bitmap(typeof(Game), "faceWon.png");
+        Bitmap mineImage = new Bitmap(typeof(Game), "mine.png");
+        Bitmap flagImage = new Bitmap(typeof(Game), "flag.png");
+        Bitmap wrongFlagImage = new Bitmap(typeof(Game), "wrongFlag.png");
 
         public Game(int rows, int cols, int mines, Form1 form)
         {
@@ -101,14 +104,6 @@ namespace Minesweeper
         }
 
         /*
-         * Handles Mouse in, if in a chord click push surrounding cells down 
-         */ 
-         public void MouseInHandle(Cell sender, MouseEventArgs e)
-        {
-
-        }
-
-        /*
          * Handles Mouse down, records if it is right or left to detect both
          * ignore if game over
          */
@@ -131,12 +126,6 @@ namespace Minesweeper
                     || (sender.CellState ==State.UP && LeftButton))
                 {
                     this.face.Image = faceWorried;
-                }
-
-                //go back to smiley if chorded on up cell
-                if (sender.CellState == State.UP && RightButton && LeftButton)
-                {
-                    this.face.Text = ":)";
                 }
 
                 //if chord show surrounding as down
@@ -201,36 +190,51 @@ namespace Minesweeper
 
             // set up minefield
 
-            //TODO: Suspend layout is still slow, find a better way
             form.SuspendLayout();
+            Form1.SuspendDrawing(form);
 
-            mineTable.Controls.Clear();
-            mineTable.RowStyles.Clear();
-            mineTable.RowCount = 1;
-            mineTable.ColumnCount = 1;
-
-            for (int r = 0; r < Rows; r++)
+            // Don't rebuild if size is the same
+            if (mineTable.RowCount == Rows
+                && mineTable.ColumnCount == Cols)
             {
-                if (mineTable.RowCount < (r + 1))
+                foreach (Control cell in mineTable.Controls)
                 {
-                    mineTable.RowCount = r + 1;
-                    mineTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-                }
-
-                for (int c = 0; c < Cols; c++)
-                {
-                    if (mineTable.ColumnCount < (c + 1))
+                    if (cell is Cell)
                     {
-                        mineTable.ColumnCount = c + 1;
-                        mineTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+                        Cell c =  (Cell)cell;
+                        c.CellState = State.UP;
+                        c.Text = null;
+                        c.Image = null;
+                        c.BackColor = Color.Transparent;
+                        c.FlatAppearance.MouseOverBackColor = Color.Transparent;
+                        c.Flagged = false;
+                        c.HasBomb = false;
+                        c.TempDown = false;
                     }
-
-                    mineTable.Controls.Add(new Cell(c, r, this), c, r);
                 }
             }
+
+            //TODO: Suspend layout is still slow, find a better way
+
+            else
+            {
+                mineTable.RowCount = Rows;
+                mineTable.ColumnCount = Cols;
+                mineTable.Controls.Clear();
+
+                for (int r = 0; r < Rows; r++)
+                {
+                    for (int c = 0; c < Cols; c++)
+                    {
+                        mineTable.Controls.Add(new Cell(c, r, this), c, r);
+                    }
+                }
+            }
+            
             face.Image = faceSmile;
             form.mineCounter.Text = Mines.ToString();
             form.ResumeLayout();
+            Form1.ResumeDrawing(form);
         }
 
         /*
@@ -239,7 +243,7 @@ namespace Minesweeper
         public void Uncover(Cell C)
         {
             List<Cell> surrounding;
-            //if its the frst cell uncovered in a new game, lay a new field with this
+            //if its the first cell uncovered in a new game, lay a new field with this
             //cell safe
             if (Newgame)
             {
@@ -256,7 +260,7 @@ namespace Minesweeper
                     //todo: game over
                     C.BackColor = Color.Red;
                     C.FlatAppearance.MouseOverBackColor = Color.Red;
-                    C.Text = "*";
+                    C.Image = mineImage;
                     face.Image = faceDead;
 
                     //show all unflagged mines
@@ -264,7 +268,7 @@ namespace Minesweeper
                     {
                         if (cell.HasBomb && !cell.Flagged && !cell.Equals(C))
                         {
-                            cell.Text = "*";
+                            cell.Image = mineImage; ;
                         }
                     }
 
@@ -320,7 +324,7 @@ namespace Minesweeper
                     form.mineCounter.Text = (int.Parse(form.mineCounter.Text) + 1).ToString();
                 }
 
-                C.Text = (C.Flagged) ? "F" : "";
+                C.Image = (C.Flagged) ? flagImage : null;
 
             }
         }
@@ -357,6 +361,10 @@ namespace Minesweeper
                     if (flaggedNear == cell.TouchesCount)
                     {
                         Uncover(c);
+                        if (c.Flagged && !c.HasBomb)
+                        {
+                            c.Image = wrongFlagImage;
+                        }
                     }
                 }
                  
