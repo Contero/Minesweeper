@@ -36,10 +36,12 @@ namespace Minesweeper
         public int Cols { get; set; }
         public int Mines { get; set; }
         public int ToUncover { get; set; }
+        private const int scale = 2;
         private readonly Button face;
         private int uncovered = 0,
             flagged = 0;
-        private TableLayoutPanel mineTable;
+        private Minefield minefield;
+        private Drawinator drawinator = new Drawinator(scale);
         private readonly GameMode EASY = new GameMode(9, 9, 10);
         private readonly GameMode INTERMEDIATE = new GameMode(16, 16, 40);
         private readonly GameMode ADVANCED = new GameMode(16, 30, 99);
@@ -52,9 +54,6 @@ namespace Minesweeper
         Bitmap faceWorried = new Bitmap(typeof(Game), "faceWorried2.png");
         Bitmap faceDead = new Bitmap(typeof(Game), "faceDead.png");
         Bitmap faceWon = new Bitmap(typeof(Game), "faceWon.png");
-        Bitmap mineImage = new Bitmap(typeof(Game), "mine.png");
-        Bitmap flagImage = new Bitmap(typeof(Game), "flag.png");
-        Bitmap wrongFlagImage = new Bitmap(typeof(Game), "wrongFlag.png");
 
         public Game(int rows, int cols, int mines, Form1 form)
         {
@@ -63,7 +62,6 @@ namespace Minesweeper
             Cols = cols;
             Mines = mines;
             ToUncover = (rows * cols - mines);
-            this.mineTable = form.mineTable;
             this.face = form.NewGame;
             this.form = form;
         }
@@ -107,11 +105,10 @@ namespace Minesweeper
          * Handles Mouse down, records if it is right or left to detect both
          * ignore if game over
          */
-        public void MouseDownHandle(Cell sender, MouseEventArgs e)
+        public void MouseDownHandle(Object sender, MouseEventArgs e)
         {
             if (!GameOver)
             {
-
                 if (e.Button == MouseButtons.Left)
                 {
                     LeftButton = true;
@@ -121,27 +118,34 @@ namespace Minesweeper
                     RightButton = true;
                 }
 
+                // determine cell
+                int x, y;
+                x = e.X / (scale * 16);
+                y = e.Y / (scale * 16);
+
+                Cell cell = minefield.getCell(x, y);
+
                 //show worried face
-                if ((sender.CellState == State.DOWN && RightButton && LeftButton)
-                    || (sender.CellState ==State.UP && LeftButton))
+                if ((cell.CellState == CellState.DOWN && RightButton && LeftButton)
+                    || (cell.CellState ==CellState.UP && LeftButton))
                 {
-                    this.face.Image = faceWorried;
+                    face.Image = faceWorried;
                 }
 
                 //if chord show surrounding as down
-                if (LeftButton && RightButton && sender.CellState == State.DOWN)
+                if (LeftButton && RightButton && cell.CellState == CellState.DOWN)
                 {
-                    List<Cell> Surrounding = GetSurrounding(sender);
-                    foreach (Cell cell in Surrounding)
+                    List<Cell> Surrounding = GetSurrounding(minefield.getField(), cell);
+                    foreach (Cell c in Surrounding)
                     {
-                        if (cell.CellState == State.UP
-                            && !cell.Flagged)
+                        if (c.CellState == CellState.UP
+                            && !c.Flagged)
                         {
-                            cell.TempDown = true;
-                            cell.CellState = State.DOWN;
+                            c.TempDown = true;
+                            c.CellState = CellState.DOWN;
                         }
                     }
-
+                
                     form.Refresh();
                 }
             }
@@ -152,30 +156,37 @@ namespace Minesweeper
          * If in game over state, sender won't have button toggles set so
          * nothing will fire
          */
-        public void MouseUpHandle(Cell sender, MouseEventArgs e)
+        public void MouseUpHandle(Object sender, MouseEventArgs e)
         {
-            if (LeftButton && RightButton)
+            // determine cell
+            int x, y;
+            x = e.X / (scale * 16);
+            y = e.Y / (scale * 16);
+
+            Cell cell = minefield.getCell(x, y);
+
+           if (LeftButton && RightButton)
             {
-                ChordClick(sender);
+                ChordClick(cell);
                 LeftButton = false;
                 RightButton = false;
             }
             else if (LeftButton)
             {
-                Uncover(sender);
+                Uncover(cell);
                 LeftButton = false;
             }
             else if (RightButton)
             {
-                Flag(sender);
+                Flag(cell);
                 RightButton = false;
             }
 
             if (!GameOver)
             {
-                this.face.Image = faceSmile;
+                face.Image = faceSmile;
             }
-            
+            form.Refresh();
         }
 
         /*
@@ -189,52 +200,11 @@ namespace Minesweeper
             flagged = 0;
 
             // set up minefield
-
-            form.SuspendLayout();
-            Form1.SuspendDrawing(form);
-
-            // Don't rebuild if size is the same
-            if (mineTable.RowCount == Rows
-                && mineTable.ColumnCount == Cols)
-            {
-                foreach (Control cell in mineTable.Controls)
-                {
-                    if (cell is Cell)
-                    {
-                        Cell c =  (Cell)cell;
-                        c.CellState = State.UP;
-                        c.Text = null;
-                        c.Image = null;
-                        c.BackColor = Color.Transparent;
-                        c.FlatAppearance.MouseOverBackColor = Color.Transparent;
-                        c.Flagged = false;
-                        c.HasBomb = false;
-                        c.TempDown = false;
-                    }
-                }
-            }
-
-            //TODO: Suspend layout is still slow, find a better way
-
-            else
-            {
-                mineTable.RowCount = Rows;
-                mineTable.ColumnCount = Cols;
-                mineTable.Controls.Clear();
-
-                for (int r = 0; r < Rows; r++)
-                {
-                    for (int c = 0; c < Cols; c++)
-                    {
-                        mineTable.Controls.Add(new Cell(c, r, this), c, r);
-                    }
-                }
-            }
-            
-            face.Image = faceSmile;
+            minefield = new Minefield(Rows, Cols);
+            form.doubleBufferedPanel1.Size = new Size(Cols * 16 * scale, Rows * 16 * scale);
+      face.Image = faceSmile;
             form.mineCounter.Text = Mines.ToString();
-            form.ResumeLayout();
-            Form1.ResumeDrawing(form);
+            form.Refresh();
         }
 
         /*
@@ -250,40 +220,22 @@ namespace Minesweeper
                 LayMineField(C);
             }
 
-            //if it's not flagged, and still up, check for mine
-            if (C.CellState == State.UP && !C.Flagged)
+            // if it's not flagged, and still up, check for mine
+            if (C.CellState == CellState.UP && !C.Flagged)
             {
-                C.CellState = State.DOWN;
+                C.CellState = CellState.DOWN;
 
                 if (C.HasBomb)
                 {
-                    //todo: game over
-                    C.BackColor = Color.Red;
-                    C.FlatAppearance.MouseOverBackColor = Color.Red;
-                    C.Image = mineImage;
                     face.Image = faceDead;
-
-                    //show all unflagged mines
-                    foreach (Cell cell in mineTable.Controls)
-                    {
-                        if (cell.HasBomb && !cell.Flagged && !cell.Equals(C))
-                        {
-                            cell.Image = mineImage; ;
-                        }
-                    }
-
+                    C.tripped = true;
                     GameOver = true;
-
                 }
                 else
                 {
-                    if (C.TouchesCount > 0)
+                    if (C.TouchesCount == 0)
                     {
-                        C.Text = C.TouchesCount.ToString();
-                    }
-                    else // if uncovered was 0, uncover surrounding also
-                    {
-                        surrounding = GetSurrounding(C);
+                        surrounding = GetSurrounding(minefield.getField(), C);
                         foreach (Cell c in surrounding)
                         {
                             Uncover(c);
@@ -298,34 +250,29 @@ namespace Minesweeper
                         GameOver = true;
                         face.Image=faceWon;
                     }
-
                 }
-                C.Refresh();
             }
         }
-
+            
         /*
          * right click - adds or removes a flag
          */
         public void Flag(Cell C)
         {
-            if (C.CellState == State.UP)
+            if (C.CellState == CellState.UP)
             {
                 C.Flagged = !C.Flagged;
 
                 if (C.Flagged)
                 {
                     flagged++;
-                    form.mineCounter.Text = (int.Parse(form.mineCounter.Text) - 1).ToString();
                 }
                 else
                 {
                     flagged--;
-                    form.mineCounter.Text = (int.Parse(form.mineCounter.Text) + 1).ToString();
                 }
 
-                C.Image = (C.Flagged) ? flagImage : null;
-
+                form.mineCounter.Text = (Mines - flagged).ToString();
             }
         }
 
@@ -334,15 +281,16 @@ namespace Minesweeper
          * If chords on a number that is equal to the number of mines touching
          * uncovers all other touching cells in up state
          */
+        
          public void ChordClick(Cell cell)
         {
             List<Cell> surrounding;
             int flaggedNear = 0;
 
-            if (cell.CellState == State.DOWN
+            if (cell.CellState == CellState.DOWN
                 && cell.TouchesCount > 0)
             {
-                surrounding = GetSurrounding(cell);
+                surrounding = GetSurrounding(minefield.getField(), cell);
 
                 foreach (Cell c in surrounding)
                 {
@@ -356,15 +304,11 @@ namespace Minesweeper
                     if (c.TempDown)
                     {
                         c.TempDown = false;
-                        c.CellState = State.UP;  
+                        c.CellState = CellState.UP;  
                     }
                     if (flaggedNear == cell.TouchesCount)
                     {
                         Uncover(c);
-                        if (c.Flagged && !c.HasBomb)
-                        {
-                            c.Image = wrongFlagImage;
-                        }
                     }
                 }
                  
@@ -400,16 +344,18 @@ namespace Minesweeper
 
                 laidMines.Add(coord);
 
-                ((Cell)mineTable.GetControlFromPosition(x, y)).HasBomb = true;
+                minefield.getCell(x, y).HasBomb = true;
             }
 
             //figure out the number of mines each cell touches
-            foreach (Cell cell in mineTable.Controls)
+            Cell[,] field = minefield.getField();
+
+            foreach (Cell cell in field)
             {
                 minecount = 0;
                 if (!cell.HasBomb)
                 {
-                    surrounding = GetSurrounding(cell);
+                    surrounding = GetSurrounding(field, cell);
 
                     foreach (Cell surroundingCell in surrounding)
                     {
@@ -418,38 +364,7 @@ namespace Minesweeper
                             minecount++;
                         }
                     }
-                    cell.TouchesCount = minecount;
-                
-                    switch (minecount)
-                    {
-                        case 1:
-                            cell.ForeColor = Color.Blue;
-                            break;
-                        case 2:
-                            cell.ForeColor = Color.Green;
-                            break;
-                        case 3:
-                            cell.ForeColor = Color.Red;
-                            break;
-                        case 4:
-                            cell.ForeColor = Color.Purple;
-                            break;
-                        case 5:
-                            cell.ForeColor = Color.Maroon;
-                            break;
-                        case 6:
-                            cell.ForeColor = Color.Turquoise;
-                            break;
-                        case 7:
-                            cell.ForeColor = Color.Black;
-                            break;
-                        case 8:
-                            cell.ForeColor = Color.Gray;
-                            break;
-                    }
-
-                    cell.Font = new Font(cell.Font, FontStyle.Bold);
-                   
+                    cell.TouchesCount = minecount;                  
                 }
             }
         }
@@ -459,7 +374,7 @@ namespace Minesweeper
          * Returns a list of cells surrounding that cell
          * Watches out for borders
          */
-        private List<Cell> GetSurrounding(Cell cell)
+        private List<Cell> GetSurrounding(Cell[,] field, Cell cell)
         {
             List<Cell> list = new List<Cell>();
 
@@ -476,14 +391,19 @@ namespace Minesweeper
             {
                 for (int c = xMin; c <= xMax; c++)
                 {
-                    if (!((Cell)mineTable.GetControlFromPosition(c, r)).Equals(cell))
+                    if (!field[c, r].Equals(cell))
                     {
-                        list.Add((Cell)mineTable.GetControlFromPosition(c, r));
+                        list.Add(field[c, r]);
                     }
                 }
             }
 
             return list;
+        }
+
+        public void draw(PaintEventArgs e)
+        {
+            minefield.draw(e, drawinator, GameOver);
         }
     }
 }

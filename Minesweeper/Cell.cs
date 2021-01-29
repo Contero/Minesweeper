@@ -1,73 +1,69 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Drawing;
 
 namespace Minesweeper
 {
-    class Cell : Button
+    public class Cell
     {
         public int TouchesCount { get; set; }
-        public Content CellContent { get; set; }
-        const int CELL_SIZE = 25;
-        public State CellState { get; set; } = State.UP;
+        // public CellContent CellContent { get; set; }
+        // const int CELL_SIZE = 25;
+        public CellState CellState { get; set; } = CellState.UP;
 
         public bool Flagged { get; set; } = false;
         public bool HasBomb { get; set; } = false;
         public bool TempDown { get; set; } = false;
+        public bool tripped { get; set; } = false;
 
         public int X { get; }
         public int Y { get; }
-        private Game game;
 
-        public Cell(int X, int Y, Game game)
+        public Cell(int X, int Y)
         {
             this.X = X;
             this.Y = Y;
-            this.game = game;
-            this.Width = CELL_SIZE;
-            this.Height = CELL_SIZE;
-            this.Margin = new Padding(0);
-            this.Dock = DockStyle.Fill;
-            this.FlatStyle = FlatStyle.Flat;
-            this.FlatAppearance.BorderSize = 0;
-            this.FlatAppearance.MouseOverBackColor = Color.Transparent;
-            this.FlatAppearance.MouseDownBackColor = Color.Transparent;
-            this.Paint += onPaint;
-            this.MouseDown += (_, args) => { game.MouseDownHandle(this, args); };
-            this.MouseUp += (_, args) => { game.MouseUpHandle(this, args); };
         }
 
-        /*
-         * Adds 3d effect if state is up
-         */
-        private void onPaint(Object sender, PaintEventArgs e)
+        public void draw(PaintEventArgs e, Drawinator d, bool gameOver)
         {
-            if (CellState == State.UP)
+            if (!gameOver)
             {
-                ControlPaint.DrawBorder(e.Graphics, this.ClientRectangle,
-                SystemColors.ControlLightLight, 5, ButtonBorderStyle.Outset,
-                SystemColors.ControlLightLight, 5, ButtonBorderStyle.Outset,
-                SystemColors.ControlLightLight, 5, ButtonBorderStyle.Outset,
-                SystemColors.ControlLightLight, 5, ButtonBorderStyle.Outset);
+                if (Flagged)
+                    d.draw(e, GraphicsLibrary.FLAGGED, X, Y);
+                else if (CellState == CellState.UP)                
+                    d.draw(e, GraphicsLibrary.UP, X, Y);
+                else if (HasBomb && gameOver)
+                    d.draw(e, GraphicsLibrary.BOMB, X, Y);
+                else if (TouchesCount == 0 || TempDown)
+                {
+                    d.draw(e, GraphicsLibrary.CLEAR, X, Y);
+                }
+                else if (TouchesCount > 0)
+                {
+                    GraphicsLibrary touches;
+                    Enum.TryParse("NUM" + TouchesCount.ToString(), out touches);
+                    d.draw(e, touches, X, Y);
+                }
+            }
+            else
+            {
+                if (Flagged && HasBomb)
+                    d.draw(e, GraphicsLibrary.FLAGGED, X, Y);
+                else if (Flagged && !HasBomb)
+                    d.draw(e, GraphicsLibrary.BOM_WRONG, X, Y);
+                else if (tripped)
+                    d.draw(e, GraphicsLibrary.BOMB_RED, X, Y);
+                else if (HasBomb)
+                    d.draw(e, GraphicsLibrary.BOMB, X, Y);
+                else if (TouchesCount > 0)
+                {
+                    GraphicsLibrary touches;
+                    Enum.TryParse("NUM" + TouchesCount.ToString(), out touches);
+                    d.draw(e, touches, X, Y);
+                }
+                else
+                    d.draw(e, GraphicsLibrary.CLEAR, X, Y);
             }
         }
-    }
-
-    enum Content
-    {
-        EMPTY,
-        BOMB,
-        FLAG,
-        NUMBER
-    }
-
-    enum State
-    {
-        UP,
-        DOWN
     }
 }

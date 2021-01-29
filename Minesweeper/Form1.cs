@@ -18,6 +18,7 @@ namespace Minesweeper
         public Form1()
         {
             InitializeComponent();
+            
         }
 
         private void beginnerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -71,22 +72,19 @@ namespace Minesweeper
             game.NewGame();
         }
 
-        [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, Int32 wMsg, bool wParam, Int32 lParam);
-
-        private const int WM_SETREDRAW = 11;
-
-        public static void SuspendDrawing(Control parent)
+        private void doubleBufferedPanel1_Paint(object sender, PaintEventArgs e)
         {
-            SendMessage(parent.Handle, WM_SETREDRAW, false, 0);
+            game.draw(e);
         }
 
-        public static void ResumeDrawing(Control parent)
+        private void doubleBufferedPanel1_MouseUp(object sender, MouseEventArgs e)
         {
-            SendMessage(parent.Handle, WM_SETREDRAW, true, 0);
-            parent.Refresh();
+            game.MouseUpHandle(sender, e);
         }
 
-
+        private void doubleBufferedPanel1_MouseDown(object sender, MouseEventArgs e)
+        {
+            game.MouseDownHandle(sender, e);
+        }
     }
 }
