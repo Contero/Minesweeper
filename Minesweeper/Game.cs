@@ -36,12 +36,13 @@ namespace Minesweeper
         public int Cols { get; set; }
         public int Mines { get; set; }
         public int ToUncover { get; set; }
-        private const int scale = 2;
-        private readonly Button face;
+        private int scale = 3;
         private int uncovered = 0,
             flagged = 0;
         private Minefield minefield;
-        private Drawinator drawinator = new Drawinator(scale);
+        private Drawinator drawinator = new Drawinator();
+        public Faceinator faceinator = new Faceinator();
+        private MineCounter mineCounter = new MineCounter();
         private readonly GameMode EASY = new GameMode(9, 9, 10);
         private readonly GameMode INTERMEDIATE = new GameMode(16, 16, 40);
         private readonly GameMode ADVANCED = new GameMode(16, 30, 99);
@@ -50,11 +51,6 @@ namespace Minesweeper
         public bool LeftButton { get; set; } = false;
         public bool RightButton { get; set; } = false;
 
-        Bitmap faceSmile = new Bitmap(typeof(Game), "faceSmiley2png.png");
-        Bitmap faceWorried = new Bitmap(typeof(Game), "faceWorried2.png");
-        Bitmap faceDead = new Bitmap(typeof(Game), "faceDead.png");
-        Bitmap faceWon = new Bitmap(typeof(Game), "faceWon.png");
-
         public Game(int rows, int cols, int mines, Form1 form)
         {
             Newgame = true;
@@ -62,8 +58,15 @@ namespace Minesweeper
             Cols = cols;
             Mines = mines;
             ToUncover = (rows * cols - mines);
-            this.face = form.NewGame;
             this.form = form;
+            setScale(scale);
+        }
+
+        public void setScale(int scale)
+        {
+            this.scale = scale;
+            form.SetHeaderTableHeight(scale);
+            drawinator.setScale(scale);
         }
 
         /*
@@ -129,7 +132,8 @@ namespace Minesweeper
                 if ((cell.CellState == CellState.DOWN && RightButton && LeftButton)
                     || (cell.CellState ==CellState.UP && LeftButton))
                 {
-                    face.Image = faceWorried;
+                    faceinator.state = GraphicsLibrary.WORRIED;
+                    form.Refresh();
                 }
 
                 //if chord show surrounding as down
@@ -184,7 +188,7 @@ namespace Minesweeper
 
             if (!GameOver)
             {
-                face.Image = faceSmile;
+                faceinator.state = GraphicsLibrary.SMILE_UP;
             }
             form.Refresh();
         }
@@ -202,8 +206,8 @@ namespace Minesweeper
             // set up minefield
             minefield = new Minefield(Rows, Cols);
             form.doubleBufferedPanel1.Size = new Size(Cols * 16 * scale, Rows * 16 * scale);
-      face.Image = faceSmile;
-            form.mineCounter.Text = Mines.ToString();
+            faceinator.state = GraphicsLibrary.SMILE_UP;
+            mineCounter.count = Mines;
             form.Refresh();
         }
 
@@ -227,7 +231,7 @@ namespace Minesweeper
 
                 if (C.HasBomb)
                 {
-                    face.Image = faceDead;
+                    faceinator.state = GraphicsLibrary.DEAD;
                     C.tripped = true;
                     GameOver = true;
                 }
@@ -248,7 +252,7 @@ namespace Minesweeper
                     if (uncovered == ToUncover)
                     {
                         GameOver = true;
-                        face.Image=faceWon;
+                        faceinator.state = GraphicsLibrary.COOL;
                     }
                 }
             }
@@ -272,7 +276,7 @@ namespace Minesweeper
                     flagged--;
                 }
 
-                form.mineCounter.Text = (Mines - flagged).ToString();
+                mineCounter.count = (Mines - flagged);
             }
         }
 
@@ -404,6 +408,16 @@ namespace Minesweeper
         public void draw(PaintEventArgs e)
         {
             minefield.draw(e, drawinator, GameOver);
+        }
+
+        public void drawFace(PaintEventArgs e)
+        {
+            faceinator.draw(e, drawinator);
+        }
+
+        public void drawCounter(PaintEventArgs e)
+        {
+            mineCounter.Draw(e, drawinator);                
         }
     }
 }

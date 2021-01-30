@@ -13,7 +13,7 @@ namespace Minesweeper
 		T_NUM7,
 		T_NUM8,
 		T_NUM9,
-		NUM0,
+		T_NUM0,
 		SMILE_UP,
 		SMILE_DOWN,
 		WORRIED,

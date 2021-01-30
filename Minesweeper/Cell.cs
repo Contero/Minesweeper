@@ -29,40 +29,42 @@ namespace Minesweeper
             if (!gameOver)
             {
                 if (Flagged)
-                    d.draw(e, GraphicsLibrary.FLAGGED, X, Y);
+                    d.Draw(Panels.MINEFIELD, e, GraphicsLibrary.FLAGGED, X, Y);
                 else if (CellState == CellState.UP)                
-                    d.draw(e, GraphicsLibrary.UP, X, Y);
+                    d.Draw(Panels.MINEFIELD, e, GraphicsLibrary.UP, X, Y);
                 else if (HasBomb && gameOver)
-                    d.draw(e, GraphicsLibrary.BOMB, X, Y);
+                    d.Draw(Panels.MINEFIELD, e, GraphicsLibrary.BOMB, X, Y);
                 else if (TouchesCount == 0 || TempDown)
                 {
-                    d.draw(e, GraphicsLibrary.CLEAR, X, Y);
+                    d.Draw(Panels.MINEFIELD, e, GraphicsLibrary.CLEAR, X, Y);
                 }
                 else if (TouchesCount > 0)
                 {
                     GraphicsLibrary touches;
                     Enum.TryParse("NUM" + TouchesCount.ToString(), out touches);
-                    d.draw(e, touches, X, Y);
+                    d.Draw(Panels.MINEFIELD, e, touches, X, Y);
                 }
             }
             else
             {
                 if (Flagged && HasBomb)
-                    d.draw(e, GraphicsLibrary.FLAGGED, X, Y);
+                    d.Draw(Panels.MINEFIELD, e, GraphicsLibrary.FLAGGED, X, Y);
                 else if (Flagged && !HasBomb)
-                    d.draw(e, GraphicsLibrary.BOM_WRONG, X, Y);
+                    d.Draw(Panels.MINEFIELD, e, GraphicsLibrary.BOM_WRONG, X, Y);
                 else if (tripped)
-                    d.draw(e, GraphicsLibrary.BOMB_RED, X, Y);
+                    d.Draw(Panels.MINEFIELD, e, GraphicsLibrary.BOMB_RED, X, Y);
                 else if (HasBomb)
-                    d.draw(e, GraphicsLibrary.BOMB, X, Y);
+                    d.Draw(Panels.MINEFIELD, e, GraphicsLibrary.BOMB, X, Y);
+                else if (CellState == CellState.UP)
+                    d.Draw(Panels.MINEFIELD, e, GraphicsLibrary.UP, X, Y);
                 else if (TouchesCount > 0)
                 {
                     GraphicsLibrary touches;
                     Enum.TryParse("NUM" + TouchesCount.ToString(), out touches);
-                    d.draw(e, touches, X, Y);
+                    d.Draw(Panels.MINEFIELD, e, touches, X, Y);
                 }
                 else
-                    d.draw(e, GraphicsLibrary.CLEAR, X, Y);
+                    d.Draw(Panels.MINEFIELD, e, GraphicsLibrary.CLEAR, X, Y);
             }
         }
     }

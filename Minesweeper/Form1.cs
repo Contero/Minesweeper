@@ -86,5 +86,41 @@ namespace Minesweeper
         {
             game.MouseDownHandle(sender, e);
         }
+
+        private void doubleBufferedPanel2_Paint(object sender, PaintEventArgs e)
+        {
+            game.drawFace(e);
+        }
+
+        private void doubleBufferedPanel2_MouseDown(object sender, MouseEventArgs e)
+        {
+            game.faceinator.state = GraphicsLibrary.SMILE_DOWN;
+            Refresh();
+        }
+
+        private void doubleBufferedPanel2_MouseUp(object sender, MouseEventArgs e)
+        {
+            game.faceinator.state = GraphicsLibrary.SMILE_UP;
+            game.NewGame();
+        }
+
+        public void SetHeaderTableHeight(int scale)
+        {
+            doubleBufferedPanel2.Height = 26 * scale;
+            doubleBufferedPanel2.Width = 26 * scale;
+            tableLayoutPanel1.RowStyles[1].Height = 34 * scale;
+            headerTable.ColumnStyles[0].Width = 39 * scale;
+            headerTable.ColumnStyles[4].Width = 32 * scale;
+            headerTable.ColumnStyles[2].Width = 27 * scale;
+            headerTable.Height = 37 * scale;
+            headerTable.Padding = new Padding(scale * 3);
+            counterPanel.Width = 39 * scale;
+            counterPanel.Height = 26 * scale;
+        }
+
+        private void counterPanel_Paint(object sender, PaintEventArgs e)
+        {
+            game.drawCounter(e);
+        }
     }
 }

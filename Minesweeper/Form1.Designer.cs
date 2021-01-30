@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.gameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -41,10 +40,10 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.headerPanel = new System.Windows.Forms.Panel();
             this.headerTable = new System.Windows.Forms.TableLayoutPanel();
-            this.mineCounter = new System.Windows.Forms.Label();
             this.TimerLabel = new System.Windows.Forms.Label();
-            this.NewGame = new System.Windows.Forms.Button();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.doubleBufferedPanel2 = new Minesweeper.DoubleBufferedPanel();
+            this.counterPanel = new Minesweeper.DoubleBufferedPanel();
             this.doubleBufferedPanel1 = new Minesweeper.DoubleBufferedPanel();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -169,14 +168,14 @@
             // 
             this.headerTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.headerTable.ColumnCount = 5;
-            this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 61F));
-            this.headerTable.Controls.Add(this.mineCounter, 0, 0);
+            this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 21F));
             this.headerTable.Controls.Add(this.TimerLabel, 4, 0);
-            this.headerTable.Controls.Add(this.NewGame, 2, 0);
+            this.headerTable.Controls.Add(this.doubleBufferedPanel2, 2, 0);
+            this.headerTable.Controls.Add(this.counterPanel, 0, 0);
             this.headerTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.headerTable.Location = new System.Drawing.Point(0, 0);
             this.headerTable.Margin = new System.Windows.Forms.Padding(0);
@@ -186,20 +185,6 @@
             this.headerTable.Size = new System.Drawing.Size(371, 56);
             this.headerTable.TabIndex = 0;
             // 
-            // mineCounter
-            // 
-            this.mineCounter.AutoSize = true;
-            this.mineCounter.BackColor = System.Drawing.Color.Black;
-            this.mineCounter.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.mineCounter.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mineCounter.ForeColor = System.Drawing.Color.Red;
-            this.mineCounter.Location = new System.Drawing.Point(3, 0);
-            this.mineCounter.Name = "mineCounter";
-            this.mineCounter.Size = new System.Drawing.Size(54, 56);
-            this.mineCounter.TabIndex = 6;
-            this.mineCounter.Text = "000";
-            this.mineCounter.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // TimerLabel
             // 
             this.TimerLabel.AutoSize = true;
@@ -207,26 +192,30 @@
             this.TimerLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.TimerLabel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TimerLabel.ForeColor = System.Drawing.Color.Red;
-            this.TimerLabel.Location = new System.Drawing.Point(313, 0);
+            this.TimerLabel.Location = new System.Drawing.Point(353, 0);
             this.TimerLabel.Name = "TimerLabel";
-            this.TimerLabel.Size = new System.Drawing.Size(55, 56);
+            this.TimerLabel.Size = new System.Drawing.Size(15, 56);
             this.TimerLabel.TabIndex = 5;
             this.TimerLabel.Text = "000";
             this.TimerLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // NewGame
+            // doubleBufferedPanel2
             // 
-            this.NewGame.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.NewGame.FlatAppearance.BorderColor = System.Drawing.Color.Red;
-            this.NewGame.FlatAppearance.BorderSize = 5;
-            this.NewGame.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.NewGame.Image = ((System.Drawing.Image)(resources.GetObject("NewGame.Image")));
-            this.NewGame.Location = new System.Drawing.Point(158, 3);
-            this.NewGame.Name = "NewGame";
-            this.NewGame.Size = new System.Drawing.Size(54, 50);
-            this.NewGame.TabIndex = 3;
-            this.NewGame.UseVisualStyleBackColor = true;
-            this.NewGame.Click += new System.EventHandler(this.NewGame_Click);
+            this.doubleBufferedPanel2.Location = new System.Drawing.Point(178, 3);
+            this.doubleBufferedPanel2.Name = "doubleBufferedPanel2";
+            this.doubleBufferedPanel2.Size = new System.Drawing.Size(14, 26);
+            this.doubleBufferedPanel2.TabIndex = 7;
+            this.doubleBufferedPanel2.Paint += new System.Windows.Forms.PaintEventHandler(this.doubleBufferedPanel2_Paint);
+            this.doubleBufferedPanel2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.doubleBufferedPanel2_MouseDown);
+            this.doubleBufferedPanel2.MouseUp += new System.Windows.Forms.MouseEventHandler(this.doubleBufferedPanel2_MouseUp);
+            // 
+            // counterPanel
+            // 
+            this.counterPanel.Location = new System.Drawing.Point(3, 3);
+            this.counterPanel.Name = "counterPanel";
+            this.counterPanel.Size = new System.Drawing.Size(14, 50);
+            this.counterPanel.TabIndex = 8;
+            this.counterPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.counterPanel_Paint);
             // 
             // doubleBufferedPanel1
             // 
@@ -279,11 +268,11 @@
         public System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel headerPanel;
         private System.Windows.Forms.TableLayoutPanel headerTable;
-        public System.Windows.Forms.Label mineCounter;
         public System.Windows.Forms.Label TimerLabel;
-        public System.Windows.Forms.Button NewGame;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         public DoubleBufferedPanel doubleBufferedPanel1;
+        private DoubleBufferedPanel doubleBufferedPanel2;
+        private DoubleBufferedPanel counterPanel;
     }
 }
 
