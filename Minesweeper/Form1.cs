@@ -14,6 +14,7 @@ namespace Minesweeper
     public partial class Form1 : Form
     {
         private Game game;
+        private HighScores statistics;
                 
         public Form1()
         {
@@ -63,7 +64,8 @@ namespace Minesweeper
         private void Form1_Load(object sender, EventArgs e)
         {
             //start first game in beginner mode
-            game = new Game(9,9,10, this);
+            game = new Game(this);
+            statistics = new HighScores(game.GetSettings());
             game.NewGame();
         }
 
@@ -110,17 +112,39 @@ namespace Minesweeper
             doubleBufferedPanel2.Width = 26 * scale;
             tableLayoutPanel1.RowStyles[1].Height = 34 * scale;
             headerTable.ColumnStyles[0].Width = 39 * scale;
-            headerTable.ColumnStyles[4].Width = 32 * scale;
+            headerTable.ColumnStyles[4].Width = 39 * scale;
             headerTable.ColumnStyles[2].Width = 27 * scale;
             headerTable.Height = 37 * scale;
             headerTable.Padding = new Padding(scale * 3);
             counterPanel.Width = 39 * scale;
             counterPanel.Height = 26 * scale;
+            timerPanel.Width = 39 * scale;
+            timerPanel.Height = 26 * scale;
         }
 
         private void counterPanel_Paint(object sender, PaintEventArgs e)
         {
             game.drawCounter(e);
+        }
+
+        public Timer getTimer()
+        {
+            return this.Timer;
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            game.Tick();
+        }
+
+        private void timerPanel_Paint(object sender, PaintEventArgs e)
+        {
+            game.drawTimer(e);
+        }
+
+        private void statisticsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            statistics.Show();
         }
     }
 }

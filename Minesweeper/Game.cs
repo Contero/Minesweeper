@@ -5,6 +5,7 @@ using System.Windows.Forms;
 
 namespace Minesweeper
 {
+    [Serializable]
     struct GameMode
     {
         readonly public int rows,
@@ -19,8 +20,8 @@ namespace Minesweeper
             toUncover = (rows * cols) - mines;
         }
     }
-
-    enum GameModes
+    [Serializable]
+    public enum GameModes
     {
         EASY,
         INTERMEDIATE,
@@ -36,30 +37,40 @@ namespace Minesweeper
         public int Cols { get; set; }
         public int Mines { get; set; }
         public int ToUncover { get; set; }
-        private int scale = 3;
+        Settings settings = new Settings();
+        private int scale;
+        
         private int uncovered = 0,
             flagged = 0;
+        Form1 form;
         private Minefield minefield;
         private Drawinator drawinator = new Drawinator();
         public Faceinator faceinator = new Faceinator();
         private MineCounter mineCounter = new MineCounter();
+        private Timerinator timerinator;
         private readonly GameMode EASY = new GameMode(9, 9, 10);
         private readonly GameMode INTERMEDIATE = new GameMode(16, 16, 40);
         private readonly GameMode ADVANCED = new GameMode(16, 30, 99);
         private GameMode CUSTOM = new GameMode(0, 0, 0);
-        Form1 form;
+        
         public bool LeftButton { get; set; } = false;
         public bool RightButton { get; set; } = false;
 
-        public Game(int rows, int cols, int mines, Form1 form)
+        public Game(/*int rows, int cols, int mines,*/ Form1 form)
         {
             Newgame = true;
-            Rows = rows;
-            Cols = cols;
-            Mines = mines;
-            ToUncover = (rows * cols - mines);
             this.form = form;
+            SetGameMode(settings.getGameMode());
+            
+            timerinator = new Timerinator(form.getTimer());
+            scale = settings.getScale();
             setScale(scale);
+            
+        }
+
+        public Settings GetSettings()
+        {
+            return settings;
         }
 
         public void setScale(int scale)
@@ -67,6 +78,7 @@ namespace Minesweeper
             this.scale = scale;
             form.SetHeaderTableHeight(scale);
             drawinator.setScale(scale);
+            timerinator.scale = scale;
         }
 
         /*
@@ -102,6 +114,9 @@ namespace Minesweeper
                     ToUncover = CUSTOM.toUncover;
                     break;
             }
+
+            settings.SetGameMode(gameMode);
+            // if (gameMode = advanced) save params
         }
 
         /*
@@ -208,6 +223,7 @@ namespace Minesweeper
             form.doubleBufferedPanel1.Size = new Size(Cols * 16 * scale, Rows * 16 * scale);
             faceinator.state = GraphicsLibrary.SMILE_UP;
             mineCounter.count = Mines;
+            timerinator.Reset();
             form.Refresh();
         }
 
@@ -222,6 +238,7 @@ namespace Minesweeper
             if (Newgame)
             {
                 LayMineField(C);
+                timerinator.Start();
             }
 
             // if it's not flagged, and still up, check for mine
@@ -231,6 +248,7 @@ namespace Minesweeper
 
                 if (C.HasBomb)
                 {
+                    timerinator.Stop();
                     faceinator.state = GraphicsLibrary.DEAD;
                     C.tripped = true;
                     GameOver = true;
@@ -252,6 +270,7 @@ namespace Minesweeper
                     if (uncovered == ToUncover)
                     {
                         GameOver = true;
+                        timerinator.Stop();
                         faceinator.state = GraphicsLibrary.COOL;
                     }
                 }
@@ -418,6 +437,17 @@ namespace Minesweeper
         public void drawCounter(PaintEventArgs e)
         {
             mineCounter.Draw(e, drawinator);                
+        }
+
+        public void drawTimer(PaintEventArgs e)
+        {
+            timerinator.Draw(e, drawinator);
+        }
+
+        public void Tick()
+        {
+            timerinator.Tick();
+            form.Refresh();
         }
     }
 }

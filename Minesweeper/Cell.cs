@@ -6,8 +6,6 @@ namespace Minesweeper
     public class Cell
     {
         public int TouchesCount { get; set; }
-        // public CellContent CellContent { get; set; }
-        // const int CELL_SIZE = 25;
         public CellState CellState { get; set; } = CellState.UP;
 
         public bool Flagged { get; set; } = false;

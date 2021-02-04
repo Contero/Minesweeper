@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.gameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -40,11 +41,13 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.headerPanel = new System.Windows.Forms.Panel();
             this.headerTable = new System.Windows.Forms.TableLayoutPanel();
-            this.TimerLabel = new System.Windows.Forms.Label();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.Timer = new System.Windows.Forms.Timer(this.components);
             this.doubleBufferedPanel2 = new Minesweeper.DoubleBufferedPanel();
             this.counterPanel = new Minesweeper.DoubleBufferedPanel();
+            this.timerPanel = new Minesweeper.DoubleBufferedPanel();
             this.doubleBufferedPanel1 = new Minesweeper.DoubleBufferedPanel();
+            this.statisticsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.headerPanel.SuspendLayout();
@@ -59,7 +62,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(395, 30);
+            this.menuStrip1.Size = new System.Drawing.Size(395, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -67,13 +70,14 @@
             // 
             this.gameToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
+            this.statisticsToolStripMenuItem,
             this.toolStripSeparator1,
             this.beginnerToolStripMenuItem,
             this.intermediateToolStripMenuItem,
             this.advancedToolStripMenuItem,
             this.customToolStripMenuItem});
             this.gameToolStripMenuItem.Name = "gameToolStripMenuItem";
-            this.gameToolStripMenuItem.Size = new System.Drawing.Size(62, 26);
+            this.gameToolStripMenuItem.Size = new System.Drawing.Size(62, 24);
             this.gameToolStripMenuItem.Text = "Game";
             // 
             // newToolStripMenuItem
@@ -125,7 +129,7 @@
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(55, 26);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(55, 24);
             this.helpToolStripMenuItem.Text = "Help";
             // 
             // tableLayoutPanel1
@@ -139,7 +143,7 @@
             this.tableLayoutPanel1.Controls.Add(this.headerPanel, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.doubleBufferedPanel1, 1, 3);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 30);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 28);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 5;
@@ -148,7 +152,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(395, 301);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(395, 303);
             this.tableLayoutPanel1.TabIndex = 3;
             // 
             // headerPanel
@@ -173,9 +177,9 @@
             this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 21F));
-            this.headerTable.Controls.Add(this.TimerLabel, 4, 0);
             this.headerTable.Controls.Add(this.doubleBufferedPanel2, 2, 0);
             this.headerTable.Controls.Add(this.counterPanel, 0, 0);
+            this.headerTable.Controls.Add(this.timerPanel, 4, 0);
             this.headerTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.headerTable.Location = new System.Drawing.Point(0, 0);
             this.headerTable.Margin = new System.Windows.Forms.Padding(0);
@@ -185,19 +189,10 @@
             this.headerTable.Size = new System.Drawing.Size(371, 56);
             this.headerTable.TabIndex = 0;
             // 
-            // TimerLabel
+            // Timer
             // 
-            this.TimerLabel.AutoSize = true;
-            this.TimerLabel.BackColor = System.Drawing.Color.Black;
-            this.TimerLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.TimerLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TimerLabel.ForeColor = System.Drawing.Color.Red;
-            this.TimerLabel.Location = new System.Drawing.Point(353, 0);
-            this.TimerLabel.Name = "TimerLabel";
-            this.TimerLabel.Size = new System.Drawing.Size(15, 56);
-            this.TimerLabel.TabIndex = 5;
-            this.TimerLabel.Text = "000";
-            this.TimerLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.Timer.Interval = 1000;
+            this.Timer.Tick += new System.EventHandler(this.Timer_Tick);
             // 
             // doubleBufferedPanel2
             // 
@@ -217,6 +212,14 @@
             this.counterPanel.TabIndex = 8;
             this.counterPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.counterPanel_Paint);
             // 
+            // timerPanel
+            // 
+            this.timerPanel.Location = new System.Drawing.Point(353, 3);
+            this.timerPanel.Name = "timerPanel";
+            this.timerPanel.Size = new System.Drawing.Size(15, 50);
+            this.timerPanel.TabIndex = 9;
+            this.timerPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.timerPanel_Paint);
+            // 
             // doubleBufferedPanel1
             // 
             this.doubleBufferedPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -227,6 +230,13 @@
             this.doubleBufferedPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.doubleBufferedPanel1_Paint);
             this.doubleBufferedPanel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.doubleBufferedPanel1_MouseDown);
             this.doubleBufferedPanel1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.doubleBufferedPanel1_MouseUp);
+            // 
+            // statisticsToolStripMenuItem
+            // 
+            this.statisticsToolStripMenuItem.Name = "statisticsToolStripMenuItem";
+            this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.statisticsToolStripMenuItem.Text = "Statistics";
+            this.statisticsToolStripMenuItem.Click += new System.EventHandler(this.statisticsToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -248,7 +258,6 @@
             this.tableLayoutPanel1.PerformLayout();
             this.headerPanel.ResumeLayout(false);
             this.headerTable.ResumeLayout(false);
-            this.headerTable.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -268,11 +277,13 @@
         public System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel headerPanel;
         private System.Windows.Forms.TableLayoutPanel headerTable;
-        public System.Windows.Forms.Label TimerLabel;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         public DoubleBufferedPanel doubleBufferedPanel1;
         private DoubleBufferedPanel doubleBufferedPanel2;
         private DoubleBufferedPanel counterPanel;
+        private System.Windows.Forms.Timer Timer;
+        private DoubleBufferedPanel timerPanel;
+        private System.Windows.Forms.ToolStripMenuItem statisticsToolStripMenuItem;
     }
 }
 
