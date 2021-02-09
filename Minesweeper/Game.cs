@@ -52,20 +52,21 @@ namespace Minesweeper
         private readonly GameMode INTERMEDIATE = new GameMode(16, 16, 40);
         private readonly GameMode ADVANCED = new GameMode(16, 30, 99);
         private GameMode CUSTOM = new GameMode(0, 0, 0);
+        private GameModes gameMode;
         
         public bool LeftButton { get; set; } = false;
         public bool RightButton { get; set; } = false;
 
-        public Game(/*int rows, int cols, int mines,*/ Form1 form)
+        public Game(Form1 form)
         {
             Newgame = true;
             this.form = form;
             SetGameMode(settings.getGameMode());
+            form.SetModeCheck(settings.getGameMode());
             
             timerinator = new Timerinator(form.getTimer());
             scale = settings.getScale();
             setScale(scale);
-            
         }
 
         public Settings GetSettings()
@@ -87,6 +88,7 @@ namespace Minesweeper
          */
          public void SetGameMode(GameModes gameMode)
         {
+            this.gameMode = gameMode;
             switch (gameMode)
             {
                 case GameModes.EASY:
@@ -272,6 +274,21 @@ namespace Minesweeper
                         GameOver = true;
                         timerinator.Stop();
                         faceinator.state = GraphicsLibrary.COOL;
+
+                        if (gameMode != GameModes.ADVANCED)
+                        {
+                            form.Refresh();
+                            if (timerinator.getTime() < settings.GetScore(gameMode).Time)
+                            {
+                                // get name
+                                NameForm nameForm = new NameForm();
+                                nameForm.ShowDialog();
+                                string name = nameForm.PlayerName;
+                                settings.SetScore(gameMode, timerinator.getTime(), name);
+                                var hs = new HighScores(settings);
+                                hs.ShowDialog();
+                            }
+                        }
                     }
                 }
             }

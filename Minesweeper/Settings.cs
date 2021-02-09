@@ -60,6 +60,43 @@ namespace Minesweeper
             return scores;
         }
 
+        public HighScore GetScore(GameModes mode)
+        {
+            HighScore score = null;
+            switch(mode)
+            {
+                case GameModes.EASY:
+                    score = settingsFile.easyTime;
+                    break;
+                case GameModes.INTERMEDIATE:
+                    score = settingsFile.mediumTime;
+                    break;
+                case GameModes.ADVANCED:
+                    score = settingsFile.advancedTime;
+                    break;
+            }
+
+            return score;
+        }
+
+        public void SetScore(GameModes mode, int time, string name)
+        {
+            switch (mode)
+            {
+                case GameModes.EASY:
+                    settingsFile.easyTime = new HighScore(time, name);
+                    break;
+                case GameModes.INTERMEDIATE:
+                    settingsFile.mediumTime = new HighScore(time, name);
+                    break;
+                case GameModes.ADVANCED:
+                    settingsFile.advancedTime = new HighScore(time, name);
+                    break;
+            }
+
+            Save();
+        }
+
         public void Load()
         {
             FileStream fs;
@@ -90,7 +127,7 @@ namespace Minesweeper
                 // settingsFile.advanced = ;
                 Save();
                 return;
-    }            
+            }            
         }
 
         public void Save()
@@ -99,6 +136,15 @@ namespace Minesweeper
             BinaryFormatter bf = new BinaryFormatter();
             bf.Serialize(fs, settingsFile);
             fs.Close();
+        }
+
+        public void Reset()
+        {
+            settingsFile.easyTime = new HighScore(999, "Anonymous");
+            settingsFile.mediumTime = new HighScore(999, "Anonymous");
+            settingsFile.advancedTime = new HighScore(999, "Anonymous");
+
+            Save();
         }
     }
 }

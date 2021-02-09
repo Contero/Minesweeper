@@ -24,48 +24,67 @@ namespace Minesweeper
 
         private void beginnerToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            SetModeCheck(GameModes.EASY); 
             game.SetGameMode(GameModes.EASY);
-            game.NewGame(); 
-
-            intermediateToolStripMenuItem.Checked = false;
-            advancedToolStripMenuItem.Checked = false;
-            customToolStripMenuItem.Checked = false;
+            game.NewGame();   
         }
 
         private void intermediateToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            SetModeCheck(GameModes.INTERMEDIATE);
             game.SetGameMode(GameModes.INTERMEDIATE);
             game.NewGame();
-
-            beginnerToolStripMenuItem.Checked = false;
-            advancedToolStripMenuItem.Checked = false;
-            customToolStripMenuItem.Checked = false;
         }
 
         private void advancedToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            SetModeCheck(GameModes.ADVANCED);
             game.SetGameMode(GameModes.ADVANCED);
             game.NewGame();
-
-            intermediateToolStripMenuItem.Checked = false;
-            beginnerToolStripMenuItem.Checked = false;
-            customToolStripMenuItem.Checked = false;
         }
 
         private void customToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            intermediateToolStripMenuItem.Checked = false;
-            beginnerToolStripMenuItem.Checked = false;
-            advancedToolStripMenuItem.Checked = false;
+            SetModeCheck(GameModes.CUSTOM);
 
             game.NewGame();
+        }
+
+        public void SetModeCheck(GameModes mode)
+        {
+            switch (mode)
+            {
+                case GameModes.EASY:
+                    beginnerToolStripMenuItem.Checked = true;
+                    intermediateToolStripMenuItem.Checked = false;
+                    advancedToolStripMenuItem.Checked = false;
+                    customToolStripMenuItem.Checked = false;
+                    break;
+                case GameModes.INTERMEDIATE:
+                    intermediateToolStripMenuItem.Checked = true;
+                    beginnerToolStripMenuItem.Checked = false;
+                    advancedToolStripMenuItem.Checked = false;
+                    customToolStripMenuItem.Checked = false;
+                    break;
+                        case GameModes.ADVANCED:
+                    advancedToolStripMenuItem.Checked = true;
+                    intermediateToolStripMenuItem.Checked = false;
+                    beginnerToolStripMenuItem.Checked = false;
+                    customToolStripMenuItem.Checked = false;
+                    break;
+                case GameModes.CUSTOM:
+                    customToolStripMenuItem.Checked = true;
+                    intermediateToolStripMenuItem.Checked = false;
+                    beginnerToolStripMenuItem.Checked = false;
+                    advancedToolStripMenuItem.Checked = false;
+                    break;
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             //start first game in beginner mode
             game = new Game(this);
-            statistics = new HighScores(game.GetSettings());
             game.NewGame();
         }
 
@@ -144,7 +163,8 @@ namespace Minesweeper
 
         private void statisticsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            statistics.Show();
+            statistics = new HighScores(game.GetSettings());
+            statistics.ShowDialog();
         }
     }
 }

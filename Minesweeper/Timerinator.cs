@@ -40,6 +40,8 @@ namespace Minesweeper
 
         public int scale { get; set; }
 
+        public int getTime() { return seconds; }
+
         private GraphicsLibrary getGraphic(int i)
         {
             GraphicsLibrary digit;

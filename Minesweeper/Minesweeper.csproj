@@ -75,6 +75,12 @@
     </Compile>
     <Compile Include="MineCounter.cs" />
     <Compile Include="MineField.cs" />
+    <Compile Include="NameForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NameForm.Designer.cs">
+      <DependentUpon>NameForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Panels.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -85,6 +91,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="HighScores.resx">
       <DependentUpon>HighScores.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NameForm.resx">
+      <DependentUpon>NameForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
