@@ -166,5 +166,31 @@ namespace Minesweeper
             statistics = new HighScores(game.GetSettings());
             statistics.ShowDialog();
         }
+
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.C)
+            {
+                if (!game.IsCheating)
+                {
+                    doubleBufferedPanel1.MouseMove += doubleBufferedPanel1_MouseMove;
+                    game.IsCheating = true;
+                }
+                else
+                {
+                    doubleBufferedPanel1.MouseMove -= doubleBufferedPanel1_MouseMove;
+                    game.IsCheating = false;
+                    Text = "Minesweeper";
+                }
+            }
+        }
+
+        private void doubleBufferedPanel1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (game.IsCheating || true)
+            {
+                game.Cheat(e);
+            }
+        }
     }
 }

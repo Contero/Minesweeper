@@ -39,7 +39,9 @@ namespace Minesweeper
         public int ToUncover { get; set; }
         Settings settings = new Settings();
         private int scale;
-        
+        public bool IsCheating { get; set; }
+        public int LastCheatX { get; set; }
+        public int LastCheatY { get; set; }
         private int uncovered = 0,
             flagged = 0;
         Form1 form;
@@ -321,7 +323,6 @@ namespace Minesweeper
          * If chords on a number that is equal to the number of mines touching
          * uncovers all other touching cells in up state
          */
-        
          public void ChordClick(Cell cell)
         {
             List<Cell> surrounding;
@@ -465,6 +466,40 @@ namespace Minesweeper
         {
             timerinator.Tick();
             form.Refresh();
+        }
+
+        public void Cheat(MouseEventArgs e)
+        {
+            // determine cell
+            int x, y;
+            x = e.X / (scale * 16);
+            y = e.Y / (scale * 16);
+
+            Cell cell = minefield.getCell(x, y);
+
+            if (LastCheatX != x || LastCheatY != y)
+            {
+                LastCheatX = x;
+                LastCheatY = y;
+
+
+                if (cell.CellState == CellState.UP)
+                {
+                    if (cell.HasBomb)
+                    {
+                        form.Text = "Minesweeper.";
+                    }
+                    else
+                    {
+                        form.Text = "Minesweeper";
+                    }
+                }
+                else
+                {
+                    form.Text = "Minesweeper";
+                }
+
+            }
         }
     }
 }
